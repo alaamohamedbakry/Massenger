@@ -15,9 +15,7 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/{id?}',[MessengerController::class,'index'])
-->middleware('auth')
-->name('messenger');
+
 
 Route::get('/dashboard', function () {
     return view('dashboard');
@@ -30,3 +28,8 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+
+Route::middleware('auth')->group(function () {
+    Route::get('/{id?}',[MessengerController::class,'index'])->name('messenger');
+
+});

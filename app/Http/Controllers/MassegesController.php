@@ -20,8 +20,9 @@ class MassegesController extends Controller
      */
     public function index($id)
     {
-        $user = User::find(1); //Auth::user();
+        $user = Auth::user();
         $convegration = $user->convegrations()->findOrFail($id);
+
         return $convegration->messages()->paginate();
     }
 
@@ -44,7 +45,7 @@ class MassegesController extends Controller
             ],
         ]);
 
-        $user = User::find(1); //Auth::user();
+        $user = Auth::user();
         $convegration_id = $request->post('convegration_id');
         $user_id = $request->post('user_id');
 
@@ -74,7 +75,7 @@ class MassegesController extends Controller
 
             $message = $convegration->messages()->create([
                 'user_id' => $user->id,
-                'body' => $request->post('massege')
+                'body' => $request->post('massege'),
             ]);
 
             foreach ($convegration->participents as $participant) {
@@ -88,15 +89,14 @@ class MassegesController extends Controller
             DB::commit();
 
             broadcast(new MassegeCreated($message));
-
-
         } catch (Exception $e) {
             DB::rollBack();
             throw $e;
         }
 
-        return response()->json($message, 201);
+        return response()->json($message,201);
     }
+
 
     /**
      * حذف رسالة معينة.

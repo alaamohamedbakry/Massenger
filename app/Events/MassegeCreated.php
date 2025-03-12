@@ -10,6 +10,7 @@ use Illuminate\Broadcasting\PrivateChannel;
 use Illuminate\Contracts\Broadcasting\ShouldBroadcast;
 use Illuminate\Foundation\Events\Dispatchable;
 use Illuminate\Queue\SerializesModels;
+use Illuminate\Support\Facades\Log;
 
 class MassegeCreated  implements ShouldBroadcast
 {
@@ -26,6 +27,8 @@ class MassegeCreated  implements ShouldBroadcast
     public function __construct(Messege $messege)
     {
         $this->messege = $messege;
+        Log::info('📢 تم بث الرسالة عبر Pusher:', ['messege' => $messege]);
+
     }
 
 
@@ -43,5 +46,19 @@ class MassegeCreated  implements ShouldBroadcast
         return [
             new PresenceChannel('Massenger.'.$other_user->id),
         ];
+    }
+    public function broadcastWith()
+    {
+        return [
+            'id' => $this->messege->id,
+            'user_id' => $this->messege->user_id,
+            'body' => $this->messege->body,
+            'created_at' => $this->messege->created_at->diffForHumans(),
+        ];
+    }
+
+    public function broadcastAs()
+    {
+        return 'MassegeCreated';
     }
 }

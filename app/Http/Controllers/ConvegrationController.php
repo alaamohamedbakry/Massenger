@@ -10,7 +10,7 @@ class ConvegrationController extends Controller
 {
     public function index(){
         $user=auth()->user();
-        return $user->convegrations()->paginate();
+        return $user->convegrations()->with('messages')->paginate();
     }
 
     public function show(Convegration $convegration){
